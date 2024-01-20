@@ -1,9 +1,5 @@
 import pytest
-import sys
-import os
 from app.app import app
-
-sys.path.append(os.path.abspath('..'))
 
 @pytest.fixture
 def client():
