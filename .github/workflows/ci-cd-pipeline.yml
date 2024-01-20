@@ -1,4 +1,4 @@
-name: CI/CD Pipeline with Docker
+name: CI/CD Pipeline with Docker and Kubernetes
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build-test-and-package:
+  build-test-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -31,15 +31,22 @@ jobs:
       # Run unit tests
 
     - name: Build Docker Image
-      run: docker build -t flask-app:${{ github.sha }} .
-      # Build the Docker image and tag it with the commit SHA
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/flask-app:${{ github.sha }} .
+      # Build the Docker image and tag it with the commit SHA and your Docker username
 
-    # Optional: Push the image to a Docker registry (e.g., Docker Hub, GitHub Container Registry)
-    # - name: Push Docker Image
-    #   if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-    #   run: |
-    #     echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-    #     docker tag flask-app:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/flask-app:${{ github.sha }}
-    #     docker push ${{ secrets.DOCKER_USERNAME }}/flask-app:${{ github.sha }}
-      # Log in to the Docker registry and push the image
-      # Make sure to set DOCKER_USERNAME and DOCKER_PASSWORD as secrets in your GitHub repository settings
+    - name: Log in to Docker Hub and push image
+      run: |
+        echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+        docker push ${{ secrets.DOCKER_USERNAME }}/flask-app:${{ github.sha }}
+      # Log in to Docker Hub, ensuring that we can push the image
+      # Push the image to Docker Hub
+
+    - name: Set up Kubeconfig
+      uses: azure/setup-kubectl@v1
+      # Set up kubectl. Make sure you have the kubeconfig set up in the GitHub secrets or as part of the environment
+
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl apply -f ./k8s/deployment.yaml
+        kubectl apply -f ./k8s/service.yaml
+      # Apply the Kubernetes manifests to deploy your application
