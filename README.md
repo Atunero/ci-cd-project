@@ -54,7 +54,7 @@ pytest
 
 ## CI/CD Pipeline with GitHub Actions
 
-The CI/CD process is defined in `.github/workflows/ci-cd-pipeline.yml` and is triggered on every push or pull request to the `main` branch. The pipeline performs the following tasks:
+The CI/CD process is defined in `.github/workflows/ci-cd-pipeline.yml` and is triggered on every push or pull request to the `master` branch. The pipeline performs the following tasks:
 
 1. **Checkout Code**: Clones the repository to the runner.
 2. **Setup Python**: Sets up the specified Python version.
