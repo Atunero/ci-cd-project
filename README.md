@@ -70,8 +70,7 @@ docker run -p 5000:5000 flask-app
 Kubernetes manifests in the `k8s` directory define the deployment and service for the application. Apply these manifests to your cluster:
 
 ```bash
-kubectl apply -f k8s/deployment.yaml
-kubectl apply -f k8s/service.yaml
+kubectl apply -f k8s/
 ```
 
 Ensure you have configured `kubeconfig` correctly to interact with your Kubernetes cluster.
