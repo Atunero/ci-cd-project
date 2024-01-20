@@ -30,23 +30,23 @@ jobs:
       run: pytest ./tests/
       # Run unit tests
 
-    - name: Build Docker Image
-      run: docker build -t flask-app:${{ github.sha }} .
-      # Build the Docker image and tag it with the commit SHA and your Docker username
+    # - name: Build Docker Image
+    #   run: docker build -t ${{ secrets.DOCKER_USERNAME }}/flask-app:${{ github.sha }} .
+    #   # Build the Docker image and tag it with the commit SHA and your Docker username
 
-    - name: Log in to Docker Hub and push image
-      run: |
-        echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-        docker push ${{ secrets.DOCKER_USERNAME }}/flask-app:${{ github.sha }}
-      # Log in to Docker Hub, ensuring that we can push the image
-      # Push the image to Docker Hub
+    # - name: Log in to Docker Hub and push image
+    #   run: |
+    #     echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+    #     docker push ${{ secrets.DOCKER_USERNAME }}/flask-app:${{ github.sha }}
+    #   # Log in to Docker Hub, ensuring that we can push the image
+    #   # Push the image to Docker Hub
 
-    - name: Set up Kubeconfig
-      uses: azure/setup-kubectl@v1
-      # Set up kubectl. Make sure you have the kubeconfig set up in the GitHub secrets or as part of the environment
+    # - name: Set up Kubeconfig
+    #   uses: azure/setup-kubectl@v1
+    #   # Set up kubectl. Make sure you have the kubeconfig set up in the GitHub secrets or as part of the environment
 
-    - name: Deploy to Kubernetes
-      run: |
-        kubectl apply -f ./k8s/deployment.yaml
-        kubectl apply -f ./k8s/service.yaml
-      # Apply the Kubernetes manifests to deploy your application
+    # - name: Deploy to Kubernetes
+    #   run: |
+    #     kubectl apply -f ./k8s/deployment.yaml
+    #     kubectl apply -f ./k8s/service.yaml
+    #   # Apply the Kubernetes manifests to deploy your application
