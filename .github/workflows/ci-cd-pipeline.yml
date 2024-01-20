@@ -1,43 +1,45 @@
-name: CI/CD Pipeline
+name: CI/CD Pipeline with Docker
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
-  build-and-test:
+  build-test-and-package:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
+      # Check out the repository code
 
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: '3.8'
+      # Set up the specified version of Python
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+      # Install the necessary Python packages
 
     - name: Run tests
+      run: pytest ./tests/
+      # Run unit tests
+
+    - name: Build Docker Image
+      run: docker build -t flask-app:${{ github.sha }} .
+      # Build the Docker image and tag it with the commit SHA
+
+    # Optional: Push the image to a Docker registry (e.g., Docker Hub, GitHub Container Registry)
+    - name: Push Docker Image
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
-        pytest ./tests/
-
-    # If you have steps for building/compiling your app, add them here
-    # - name: Build
-    #   run: |
-    #     # Your build commands
-
-  # Uncomment and modify the following part if you have deployment steps
-  # deploy:
-  #   needs: build-and-test
-  #   runs-on: ubuntu-latest
-  #   if: github.ref == 'refs/heads/main'
-  #   steps:
-  #   - name: Deploy
-  #     run: |
-  #       # Your deployment commands
+        echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+        docker tag flask-app:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/flask-app:${{ github.sha }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/flask-app:${{ github.sha }}
+      # Log in to the Docker registry and push the image
+      # Make sure to set DOCKER_USERNAME and DOCKER_PASSWORD as secrets in your GitHub repository settings
