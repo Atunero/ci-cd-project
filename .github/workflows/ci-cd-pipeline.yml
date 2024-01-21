@@ -47,6 +47,6 @@ jobs:
 
     # - name: Deploy to Kubernetes
     #   run: |
-    #     kubectl apply -f ./k8s/deployment.yaml
-    #     kubectl apply -f ./k8s/service.yaml
+    #     kubectl apply -f k8s/
+    #     kubectl set image deployment/flask-app-deployment flask-app=${{ secrets.DOCKER_USERNAME }}/my-flask-app:${{ github.sha }}
     #   # Apply the Kubernetes manifests to deploy your application
